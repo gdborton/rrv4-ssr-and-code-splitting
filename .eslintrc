@@ -1,0 +1,15 @@
+{
+  "extends": ["airbnb"],
+  "parser": "babel-eslint",
+  "root": true,
+  "rules": {
+    "react/prop-types": 0,
+    "jsx-a11y/label-has-for": 0,
+    "react/no-find-dom-node": 0,
+    "react/no-string-refs": 0,
+    "jsx-a11y/no-autofocus": 0,
+    "jsx-a11y/anchor-is-valid": [2, {
+      "specialLink": [ "to" ]
+    }]
+  }
+}
