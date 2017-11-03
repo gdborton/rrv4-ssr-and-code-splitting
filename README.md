@@ -16,7 +16,7 @@ open http://localhost:3000
 ## Things of note:
  - The contents of this repo were based on the [TodoMVC code](https://github.com/tastejs/todomvc/tree/master/examples/react) originally written by [Pete Hunt](https://github.com/petehunt).
  - We're using babel-eslint to enable `import()`.
- - We're using the Airbnb dynamic import plugins, webpack's `import()` creates references to `window` that don't work in node:
+ - We're using the Airbnb dynamic import plugins, webpack's `import()` creates references to `window` that doesn't work in node:
    - [babel-plugin-dynamic-import-webpack](https://github.com/airbnb/babel-plugin-dynamic-import-webpack) for client side code.
    - [babel-plugin-dynamic-import-node](https://github.com/airbnb/babel-plugin-dynamic-import-node) for server side code.
  - We have two webpack configs:
