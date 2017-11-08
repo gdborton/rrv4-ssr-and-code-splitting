@@ -15,7 +15,14 @@ export default function Footer(props) {
       </span>
       <ul className="filters">
         <li>
-          <Link to="/all" className={classNames({ selected: nowShowing === enums.ALL_TODOS })}>
+          <Link
+            to="/all"
+            className={
+              classNames({
+                selected: nowShowing !== enums.ACTIVE_TODOS && nowShowing !== enums.COMPLETED_TODOS,
+              })
+            }
+          >
             All
           </Link>
         </li>

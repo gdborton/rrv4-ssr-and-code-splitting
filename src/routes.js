@@ -7,7 +7,8 @@ export default [
     path: parentRoute => `${parentRoute}/`,
     routes: [
       {
-        path: parentRoute => `${parentRoute}/all`,
+        path: parentRoute => `${parentRoute}/`,
+        exact: true,
         component: generateAsyncRouteComponent({
           loader: () => import('./all-todos'),
         }),

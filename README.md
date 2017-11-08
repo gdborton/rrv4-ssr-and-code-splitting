@@ -8,10 +8,15 @@ Running the demo:
 git clone git@github.com:gdborton/rrv4-ssr-and-code-splitting.git
 cd rrv4-ssr-and-code-splitting/
 npm install
-webpack
-node server
+npm start
 open http://localhost:3000
 ```
+
+## What's async loaded?
+
+The list of todos that exists between the input bar and the footer of stack of todos. If you open your network tab before navigating between All/Active/Completed, you'll notice requests for `0.index.bundle.js`, `1.index.bundle.js`, and `2.index.bundle.js` respectively.
+
+![async-component](./async-highlight.png)
 
 ## Things of note:
  - The contents of this repo were based on the [TodoMVC code](https://github.com/tastejs/todomvc/tree/master/examples/react) originally written by [Pete Hunt](https://github.com/petehunt).
