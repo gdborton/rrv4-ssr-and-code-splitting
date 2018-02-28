@@ -1,7 +1,22 @@
-import React from 'react';
+import * as React from 'react';
 import TodoItem from './todoItem';
 
-export default function TodoList(props) {
+interface IOwnProps {
+  editing: Function;
+  // placeholder
+  todos: any[];
+  onCancel: Function;
+  onDestroy: Function;
+  onEdit: Function;
+  onSave: Function;
+  onToggle: Function;
+}
+
+interface IProps extends IOwnProps { // , DispatchProp<any>, RouteComponentProps<any>
+  // location: history.Location;
+}
+
+export default function TodoList(props: IProps) {
   const todoItems = props.todos.map(todo => (
     <TodoItem
       key={todo.id}

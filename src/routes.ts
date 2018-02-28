@@ -1,10 +1,24 @@
-import App from './app';
+import { RouteConfig } from 'react-router-config';
+
+import { TodoApp } from './app';
 import { generateAsyncRouteComponent } from './rrv4Helpers';
 
-export default [
+export type ParentRoutePath = (parentRoute: string) => string;
+
+// @ts-ignore
+export interface CustomRouteConfig extends RouteConfig {
+  path: string | ParentRoutePath;
+  routes?: CustomRouteConfig[];
+}
+
+// export function isCustomRouteConfig(routeConfig: CustomRouteConfig | RouteConfig): routeConfig is CustomRouteConfig {
+//   return (<CustomRouteConfig>routeConfig).path is ParentRoutePath;
+// }
+
+export const AppRoutes: CustomRouteConfig[] = [
   {
-    component: App,
-    path: parentRoute => `${parentRoute}/`,
+    component:TodoApp,
+    path: (parentRoute) => `${parentRoute}/`,
     routes: [
       {
         path: parentRoute => `${parentRoute}/`,
