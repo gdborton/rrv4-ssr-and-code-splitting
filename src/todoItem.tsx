@@ -1,16 +1,37 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import classNames from 'classnames';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import * as classNames from 'classnames';
 
 const ESCAPE_KEY = 27;
 const ENTER_KEY = 13;
 
-export default class TodoItem extends React.Component {
-  constructor(props) {
+interface IOwnProps {
+  editing: any;
+  todo: any;
+  onCancel: Function;
+  onDestroy: Function;
+  onEdit: Function;
+  onSave: Function;
+  onToggle: Function;
+}
+
+interface IProps extends IOwnProps { // , DispatchProp<any>, RouteComponentProps<any>
+  // location: history.Location;
+}
+
+interface IState {
+  editText: string;
+}
+
+export default class TodoItem extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
     super(props);
     this.state = {
       editText: props.todo.title,
     };
+
+    this.handleDestroy = this.handleDestroy.bind(this);
+    this.handleToggle = this.handleToggle.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
@@ -24,7 +45,7 @@ export default class TodoItem extends React.Component {
    * just use it as an example of how little code it takes to get an order
    * of magnitude performance improvement.
    */
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps: IProps, nextState: IState) {
     return (
       nextProps.todo !== this.props.todo ||
       nextProps.editing !== this.props.editing ||
@@ -38,12 +59,22 @@ export default class TodoItem extends React.Component {
    * For more info refer to notes at https://facebook.github.io/react/docs/component-api.html#setstate
    * and https://facebook.github.io/react/docs/component-specs.html#updating-componentdidupdate
    */
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: IProps) {
     if (!prevProps.editing && this.props.editing) {
-      const node = ReactDOM.findDOMNode(this.refs.editField);
+      const node = ReactDOM.findDOMNode(this.refs.editField) as HTMLInputElement;
       node.focus();
       node.setSelectionRange(node.value.length, node.value.length);
     }
+  }
+
+  handleDestroy(event:  React.MouseEvent<HTMLInputElement>) {
+    console.log(event);
+    this.props.onDestroy();
+  }
+
+  handleToggle(event:  React.ChangeEvent<HTMLInputElement>) {
+    console.log(event);
+    this.props.onToggle();
   }
 
   handleSubmit() {
@@ -61,16 +92,16 @@ export default class TodoItem extends React.Component {
     this.setState({ editText: this.props.todo.title });
   }
 
-  handleKeyDown(event) {
+  handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>): void {
     if (event.which === ESCAPE_KEY) {
       this.setState({ editText: this.props.todo.title });
       this.props.onCancel(event);
     } else if (event.which === ENTER_KEY) {
-      this.handleSubmit(event);
+      this.handleSubmit();
     }
   }
 
-  handleChange(event) {
+  handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     if (this.props.editing) {
       this.setState({ editText: event.target.value });
     }
@@ -88,12 +119,12 @@ export default class TodoItem extends React.Component {
             className="toggle"
             type="checkbox"
             checked={this.props.todo.completed}
-            onChange={this.props.onToggle}
+            onChange={this.handleToggle}
           />
           <label onDoubleClick={this.handleEdit}>
             {this.props.todo.title}
           </label>
-          <button className="destroy" onClick={this.props.onDestroy} />
+          <button className="destroy" onClick={this.handleDestroy} />
         </div>
         <input
           ref="editField"

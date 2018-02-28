@@ -1,27 +1,34 @@
-import React from 'react';
-import { matchRoutes } from 'react-router-config';
+import * as React from 'react';
+import { matchRoutes, RouteConfig } from 'react-router-config';
+import { CustomRouteConfig } from './routes';
 
 /**
  * Returns a new React component, ready to be instantiated.
  * Note the closure here protecting Component, and providing a unique
  * instance of Component to the static implementation of `load`.
  */
-export function generateAsyncRouteComponent({ loader, Placeholder }) {
+
+interface IAsyncRoute {
+  loader: () => Promise<any>;
+  Placeholder?: any;
+}
+
+export function generateAsyncRouteComponent(route: IAsyncRoute) {
   let Component = null;
-  return class AsyncRouteComponent extends React.Component {
+  return class AsyncRouteComponent extends React.Component<any, any> {
     /**
      * Static so that you can call load against an uninstantiated version of
      * this component. This should only be called one time outside of the
      * normal render path.
      */
     static load() {
-      return loader().then((ResolvedComponent) => {
+      return route.loader().then((ResolvedComponent) => {
         Component = ResolvedComponent.default || ResolvedComponent;
       });
     }
 
     constructor() {
-      super();
+      super({});
       this.updateState = this.updateState.bind(this);
       this.state = {
         Component,
@@ -48,8 +55,8 @@ export function generateAsyncRouteComponent({ loader, Placeholder }) {
         return <ComponentFromState {...this.props} />;
       }
 
-      if (Placeholder) {
-        return <Placeholder {...this.props} />;
+      if (route.Placeholder) {
+        return <route.Placeholder {...this.props} />;
       }
 
       return null;
@@ -64,19 +71,20 @@ export function generateAsyncRouteComponent({ loader, Placeholder }) {
  *
  * This helps us to make sure all the async code is loaded before rendering.
  */
-export function ensureReady(routeConfig, providedLocation) {
+export function ensureReady(routeConfig: RouteConfig[], providedLocation?: string) {
   const matches = matchRoutes(routeConfig, providedLocation || location.pathname);
   return Promise.all(matches.map((match) => {
     const { component } = match.route;
-    if (component && component.load) {
-      return component.load();
+    if (component && component.hasOwnProperty('load')) {
+      return component['load']();
     }
+
     return undefined;
   }));
 }
 
-export function convertCustomRouteConfig(customRouteConfig, parentRoute) {
-  return customRouteConfig.map((route) => {
+export function convertCustomRouteConfig(customRouteConfig: CustomRouteConfig[], parentRoute?: any): RouteConfig[] {
+  return customRouteConfig.map<RouteConfig>((route) => {
     if (typeof route.path === 'function') {
       const pathResult = route.path(parentRoute || '').replace('//', '/');
       return {

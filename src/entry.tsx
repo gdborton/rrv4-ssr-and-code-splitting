@@ -1,17 +1,20 @@
 import { BrowserRouter, StaticRouter } from 'react-router-dom';
 import { render } from 'react-dom';
-import React from 'react';
+import * as React from 'react';
 import { renderRoutes } from 'react-router-config';
 
-import routes from './routes';
+import { AppRoutes } from './routes';
 
 import { convertCustomRouteConfig, ensureReady } from './rrv4Helpers';
 
-const routeConfig = convertCustomRouteConfig(routes);
+const routeConfig = convertCustomRouteConfig(AppRoutes);
 
 if (typeof window !== 'undefined') {
   ensureReady(routeConfig).then(() => {
-    const props = JSON.parse(document.getElementById('props').dataset.props); // eslint-disable-line
+    const e = document.getElementById('props');
+    const d = e ? e.dataset.props : undefined;
+    const c = d ? d : '';
+    const props = JSON.parse(c); // eslint-disable-line
     render(
       (
         <BrowserRouter>

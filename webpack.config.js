@@ -1,33 +1,40 @@
 const path = require('path');
 
-const entry = './src/entry.jsx';
+const entry = './src/entry.tsx';
+
 const outputPath = path.resolve('./dist');
 const publicPath = '/dist/';
 const resolve = {
-  extensions: ['.js', '.jsx'],
+  extensions: ['.ts', '.tsx', '.js', '.json', '.jsx', '.css', 'scss'],
+  modules: ['node_modules'],
 };
 
 const clientConfig = {
   entry,
+  mode:'development',
   output: {
     path: outputPath,
     filename: 'index.bundle.js',
     publicPath,
   },
   module: {
-    loaders: [{
-      loader: 'babel-loader',
-      include: [path.resolve('./src')],
-      options: {
-        plugins: ['dynamic-import-webpack'],
-      },
-    }],
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: [
+          {
+            loader: 'awesome-typescript-loader'
+          }
+        ]
+      }
+    ],
   },
   resolve,
 };
 
 const serverConfig = {
   entry,
+  mode:'development',
   output: {
     path: outputPath,
     filename: 'index.server.bundle.js',
@@ -35,13 +42,16 @@ const serverConfig = {
     publicPath,
   },
   module: {
-    loaders: [{
-      loader: 'babel-loader',
-      include: [path.resolve('./src')],
-      options: {
-        plugins: ['dynamic-import-node'],
-      },
-    }],
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: [
+          {
+            loader: 'awesome-typescript-loader'
+          }
+        ]
+      }
+    ],
   },
   resolve,
 };

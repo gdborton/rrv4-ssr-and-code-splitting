@@ -1,12 +1,27 @@
-import React from 'react';
-import { renderRoutes } from 'react-router-config';
+import * as React from 'react';
+import { renderRoutes } from 'react-router-config'; // , RouteConfigComponentProps
 import TodoFooter from './footer';
 import utils from './utils';
 
 const ENTER_KEY = 13;
 
-class TodoApp extends React.Component {
-  constructor(props) {
+// interface IOwnProps {
+//   // placeholder
+//   todos: any[];
+// }
+
+// interface IProps extends  RouteConfigComponentProps<any> { // , DispatchProp<any>
+//   // location: history.Location;
+// }
+
+// // interface IState {
+// //   editing: any;
+// //   newTodo: any;
+// //   todos: any[];
+// // }
+
+export class TodoApp extends React.Component<any, any> {//, IState
+  constructor(props: any) {
     super(props);
 
     this.state = {
@@ -27,11 +42,11 @@ class TodoApp extends React.Component {
 
     event.preventDefault();
 
-    const val = this.state.newTodo.trim();
+    const val = (this.state as any).newTodo.trim();
 
     if (val) {
       this.setState({
-        todos: this.state.todos.concat({
+        todos: (this.state as any).todos.concat({
           id: utils.uuid(),
           title: val,
           completed: false,
@@ -44,13 +59,13 @@ class TodoApp extends React.Component {
   toggleAll(event) {
     const { checked } = event.target;
     this.setState({
-      todos: this.state.todos.map(todo => Object.assign({}, todo, { completed: checked })),
+      todos: (this.state as any).todos.map(todo => Object.assign({}, todo, { completed: checked })),
     });
   }
 
   toggle(todoToToggle) {
     this.setState({
-      todos: this.state.todos.map((todo) => {
+      todos: (this.state as any).todos.map((todo) => {
         if (todo === todoToToggle) {
           return Object.assign({}, todo, {
             completed: !todo.completed,
@@ -63,7 +78,7 @@ class TodoApp extends React.Component {
 
   destroy(passedTodo) {
     this.setState({
-      todos: this.state.todos.filter(todo => todo !== passedTodo),
+      todos: (this.state as any).todos.filter(todo => todo !== passedTodo),
     });
   }
 
@@ -73,7 +88,7 @@ class TodoApp extends React.Component {
 
   save(todoToSave, text) {
     this.setState({
-      todos: this.state.todos.map((todo) => {
+      todos: (this.state as any).todos.map((todo) => {
         if (todo === todoToSave) {
           return Object.assign({}, todo, {
             title: text,
@@ -91,14 +106,14 @@ class TodoApp extends React.Component {
 
   clearCompleted() {
     this.setState({
-      todos: this.state.todos.filter(todo => !todo.completed),
+      todos: (this.state as any).todos.filter(todo => !todo.completed),
     });
   }
 
   render() {
     let footer;
     let main;
-    const { todos } = this.state;
+    const { todos } = (this.state as any);
 
     const activeTodoCount = todos.reduce((accum, todo) => (todo.completed ? accum : accum + 1), 0);
 
@@ -125,15 +140,15 @@ class TodoApp extends React.Component {
           />
           <ul className="todo-list">
             {
-              renderRoutes(this.props.route.routes, {
+              this.props.route ? renderRoutes(this.props.route.routes, {
                 todos,
                 onToggle: (todo) => { this.toggle(todo); },
                 onDestroy: (todo) => { this.destroy(todo); },
                 onEdit: (todo) => { this.edit(todo); },
-                editing: todo => this.state.editing === todo.id,
+                editing: todo => (this.state as any).editing === todo.id,
                 onSave: (todo, text) => { this.save(todo, text); },
                 onCancel: () => this.cancel(),
-              })
+              }) : null
             }
           </ul>
         </section>
@@ -147,7 +162,7 @@ class TodoApp extends React.Component {
           <input
             className="new-todo"
             placeholder="What needs to be done?"
-            value={this.state.newTodo}
+            value={(this.state as any).newTodo}
             onKeyDown={(event) => { this.handleNewTodoKeyDown(event); }}
             onChange={(event) => { this.handleChange(event); }}
             autoFocus
@@ -159,5 +174,3 @@ class TodoApp extends React.Component {
     );
   }
 }
-
-export default TodoApp;
