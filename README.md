@@ -36,11 +36,9 @@ you'll notice requests for `0.index.bundle.js`, `1.index.bundle.js`, and `2.inde
 ## Things of note:
 
  - The contents of this repo were based on the [TodoMVC code](https://github.com/tastejs/todomvc/tree/master/examples/react) originally written by [Pete Hunt](https://github.com/petehunt).
- - We're using babel-eslint to enable `import()`.
- - We're using the Airbnb dynamic import plugins, webpack's `import()` creates references to `window` that don't work in node:
-   - [babel-plugin-dynamic-import-webpack](https://github.com/airbnb/babel-plugin-dynamic-import-webpack) for client side code.
-   - [babel-plugin-dynamic-import-node](https://github.com/airbnb/babel-plugin-dynamic-import-node) for server side code.
- - We have two webpack configs:
-   - One for server (`libraryTarget = commonjs2` and `babel-plugin-dynamic-import-node`).
-   - Another for client (`babel-plugin-dynamic-import-webpack`).
+ - Upgraded to webpack v4 comparing to upstream repo
+ - We have 3 webpack configs:
+   - One for server
+   - Another for client
+   - Third one (./webpack.serverless.js) for running in serverless
  - The server, starts with some static data, **and is never updated**, you'll lose your changes if you reload the page.
