@@ -33,6 +33,7 @@ const clientConfig = {
   },
   resolve,
   plugins: [
+    // Limit chunks to 1 effectively disable chunking (used in dynamic imports)
     new webpack.optimize.LimitChunkCountPlugin({
       maxChunks: 1,
     })
@@ -69,7 +70,9 @@ const serverConfig = {
   },
   resolve,
   plugins: [
+    // Assume runs last
     new CleanWebpackPlugin('dist/*.*'),
+    // Limit chunks to 1 effectively disable chunking (used in dynamic imports)
     new webpack.optimize.LimitChunkCountPlugin({
       maxChunks: 1,
     })

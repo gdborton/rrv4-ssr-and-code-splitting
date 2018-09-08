@@ -37,8 +37,14 @@ const config = {
   resolve,
   // For serverless, everything needed must be copied to output folder
   plugins: [
-    // Copy and maintain dir css
-    new CopyWebpackPlugin([ { from: "css", to: "css" }, { from: "dist", to: "dist" } ]),
+    // Copy all used resources (no dir available)
+    new CopyWebpackPlugin([
+      { from: "css", to: "css" },
+      { from: "dist", to: "dist" },
+      { from: "public", to: "public" },
+      "index.html"
+    ]),
+    // Limit chunks to 1 effectively disable chunking (used in dynamic imports)
     new webpack.optimize.LimitChunkCountPlugin({
       maxChunks: 1,
     })

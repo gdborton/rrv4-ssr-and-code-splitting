@@ -1,11 +1,13 @@
 const serverless = require('serverless-http');
 const fs = require('fs');
+const cors = require('cors');
 const express = require('express');
 const ReactDOMServer = require('react-dom/server');
 const App = require('./dist/index.server.bundle.js');
 
 const app = express();
-const template = fs.readFileSync('./index.html', 'utf8'); // stupid simple template.
+const template = fs.readFileSync(`${__dirname}/index.html`, 'utf8'); // stupid simple template.
+const port = process.env.SERVER_PORT || 3000;
 
 const todos = [
   { id: 'ed0bcc48-bbbe-5f06-c7c9-2ccb0456ceba', title: 'Wake Up.', completed: true },
@@ -16,11 +18,12 @@ const todos = [
   { id: '63a871b2-0b6f-4422-9c35-304bc680a4b7', title: 'Profit.', completed: false },
 ];
 
-console.log("dirname: " + __dirname);
-
+app.use(cors());
 // express.static was only working for some requests, but not others.
 app.use('/dist', express.static(`${__dirname}/dist`));
 app.use('/css', express.static(`${__dirname}/css`));
+// root files
+app.use(express.static(`${__dirname}/public`));
 
 app.get('*', (req, res) => {
   const props = { todos };
@@ -32,6 +35,18 @@ app.get('*', (req, res) => {
     res.end();
   });
 });
+
+// Don`t listen in serverless
+if (process.env._HANDLER !== 'server.serverless') {
+  app.listen(port, () => {
+    console.log(`listening on port: ${port}`);
+  });
+}
+
+// Do something in AWS
+if (process.env.AWS_EXECUTION_ENV !== undefined) {
+  console.log("Hello Amazon!");
+}
 
 module.exports.serverless = serverless(app);
 

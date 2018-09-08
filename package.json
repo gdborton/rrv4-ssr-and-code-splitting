@@ -8,7 +8,8 @@
     "start": "webpack && node ./server.js",
     "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "sls": "webpack && sls offline start"
+    "sls": "webpack && sls offline start",
+    "sls:deploy": "webpack && sls deploy"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
   "homepage": "https://github.com/gdborton/rrv4-ssr-and-code-splitting#readme",
   "dependencies": {
     "classnames": "^2.2.5",
+    "cors": "^2.8.4",
     "express": "^4.16.2",
     "mime": "^2.0.3",
     "react": "^16.5.0",
