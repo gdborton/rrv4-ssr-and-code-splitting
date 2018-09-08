@@ -4,11 +4,6 @@ const express = require('express');
 const ReactDOMServer = require('react-dom/server');
 const App = require('./dist/index.server.bundle.js');
 
-//const express = require('serverless-express/express');
-//const handler = require('serverless-express/handler')
-
-const PORT = 3000;
-
 const app = express();
 const template = fs.readFileSync('./index.html', 'utf8'); // stupid simple template.
 
@@ -20,6 +15,8 @@ const todos = [
   { id: '63a871b2-0b6f-4427-9c35-304bc680a4b7', title: '??????', completed: false },
   { id: '63a871b2-0b6f-4422-9c35-304bc680a4b7', title: 'Profit.', completed: false },
 ];
+
+console.log("dirname: " + __dirname);
 
 // express.static was only working for some requests, but not others.
 app.use('/dist', express.static(`${__dirname}/dist`));
@@ -36,10 +33,5 @@ app.get('*', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`listening on port: ${PORT}`);
-});
-
 module.exports.serverless = serverless(app);
-//module.exports.serverless = handler(app);
 
