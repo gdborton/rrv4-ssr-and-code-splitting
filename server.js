@@ -1,7 +1,11 @@
+const serverless = require('serverless-http');
 const fs = require('fs');
 const express = require('express');
 const ReactDOMServer = require('react-dom/server');
 const App = require('./dist/index.server.bundle.js');
+
+//const express = require('serverless-express/express');
+//const handler = require('serverless-express/handler')
 
 const PORT = 3000;
 
@@ -35,3 +39,7 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`listening on port: ${PORT}`);
 });
+
+module.exports.serverless = serverless(app);
+//module.exports.serverless = handler(app);
+

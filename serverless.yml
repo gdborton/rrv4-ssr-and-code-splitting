@@ -1,0 +1,39 @@
+# For full config options, check the docs:
+#    docs.serverless.com
+
+service: todo
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  region: eu-west-1
+  stage: dev
+  # optional, in MB, default is 1024
+  memorySize: 256
+  # optional, in seconds, default is 6
+  timeout: 6
+  # optional, default is true
+  versionFunctions: false
+  environment:
+    VARNAME: VARVALUE
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.serverless.js
+    includeModules: true
+    packager: 'npm'
+
+package:
+  exclude:
+    - tmp/**
+
+functions:
+  app:
+    handler: server.serverless
+    events:
+        - http: ANY /
+        - http: 'ANY {proxy+}'
+
+plugins:
+  - serverless-webpack
+  - serverless-offline

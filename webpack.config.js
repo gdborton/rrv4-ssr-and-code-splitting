@@ -9,41 +9,48 @@ const resolve = {
 
 const clientConfig = {
   entry,
+  mode: process.env.NODE_ENV == "production" ? "production" : "development",
   output: {
     path: outputPath,
     filename: 'index.bundle.js',
     publicPath,
   },
   module: {
-    loaders: [{
-      loader: 'babel-loader',
-      include: [path.resolve('./src')],
-      options: {
-        plugins: ['dynamic-import-webpack'],
-      },
-    }],
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: [
+          { loader: 'babel-loader' },
+        ]
+      }
+    ]
   },
-  resolve,
+  resolve
 };
 
 const serverConfig = {
   entry,
+  target: 'node',
+  mode: process.env.NODE_ENV == "production" ? "production" : "development",
   output: {
     path: outputPath,
     filename: 'index.server.bundle.js',
-    libraryTarget: 'commonjs2',
+    libraryTarget: 'commonjs',
     publicPath,
   },
   module: {
-    loaders: [{
-      loader: 'babel-loader',
-      include: [path.resolve('./src')],
-      options: {
-        plugins: ['dynamic-import-node'],
-      },
-    }],
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: [
+          { loader: 'babel-loader' },
+        ]
+      }
+    ]
   },
-  resolve,
+  resolve
 };
 
 module.exports = [
