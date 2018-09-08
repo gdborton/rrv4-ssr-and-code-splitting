@@ -1,7 +1,9 @@
 const path = require('path');
 const serverless = require('serverless-webpack');
-const nodeExternals = require('webpack-node-externals')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const nodeExternals = require('webpack-node-externals');
+const webpack = require('webpack');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const resolve = {
   extensions: ['.js', '.jsx'],
@@ -36,7 +38,10 @@ const config = {
   // For serverless, everything needed must be copied to output folder
   plugins: [
     // Copy and maintain dir css
-    new CopyWebpackPlugin([ { from: "css", to: "css" }, { from: "dist", to: "dist" } ])
+    new CopyWebpackPlugin([ { from: "css", to: "css" }, { from: "dist", to: "dist" } ]),
+    new webpack.optimize.LimitChunkCountPlugin({
+      maxChunks: 1,
+    })
   ]
 };
 

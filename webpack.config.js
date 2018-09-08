@@ -1,4 +1,6 @@
 const path = require('path');
+const webpack = require('webpack');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const entry = './src/entry.jsx';
 const outputPath = path.resolve('./dist');
@@ -29,7 +31,12 @@ const clientConfig = {
       }
     ]
   },
-  resolve
+  resolve,
+  plugins: [
+    new webpack.optimize.LimitChunkCountPlugin({
+      maxChunks: 1,
+    })
+  ]
 };
 
 const serverConfig = {
@@ -60,7 +67,13 @@ const serverConfig = {
       }
     ]
   },
-  resolve
+  resolve,
+  plugins: [
+    new CleanWebpackPlugin('dist/*.*'),
+    new webpack.optimize.LimitChunkCountPlugin({
+      maxChunks: 1,
+    })
+  ]
 };
 
 module.exports = [

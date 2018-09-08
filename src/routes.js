@@ -1,7 +1,5 @@
 import App from './app';
-import allTodos from './all-todos';
-import activeTodos from './active-todos';
-import completedTodos from './completed-todos';
+import { generateAsyncRouteComponent } from './rrv4Helpers';
 
 export default [
   {
@@ -11,19 +9,27 @@ export default [
       {
         path: parentRoute => `${parentRoute}/`,
         exact: true,
-        component: allTodos,
+        component: generateAsyncRouteComponent({
+          loader: () => import('./all-todos'),
+        }),
       },
       {
         path: parentRoute => `${parentRoute}/all`,
-        component: allTodos,
+        component: generateAsyncRouteComponent({
+          loader: () => import('./all-todos'),
+        }),
       },
       {
         path: parentRoute => `${parentRoute}/active`,
-        component: activeTodos,
+        component: generateAsyncRouteComponent({
+          loader: () => import('./active-todos'),
+        }),
       },
       {
         path: parentRoute => `${parentRoute}/completed`,
-        component: completedTodos,
+        component: generateAsyncRouteComponent({
+          loader: () => import('./completed-todos'),
+        }),
       },
     ],
   },
