@@ -25,6 +25,14 @@ Runs `serverless offline` with webpack support.
 npm run sls
 ```
 
+## Running in AWS
+
+For proper paths, you __MUST__ define custom domain.
+
+```
+npm run sls:deploy
+```
+
 ## What's async loaded?
 
 The list of todos that exists between the input bar and the footer of stack of todos. 
