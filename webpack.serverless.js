@@ -45,8 +45,9 @@ const config = {
       "index.html"
     ]),
     // Limit chunks to 1 effectively disable chunking (used in dynamic imports)
+    // Dos not 
     new webpack.optimize.LimitChunkCountPlugin({
-      maxChunks: 1,
+      maxChunks: 1
     })
   ]
 };
