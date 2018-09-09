@@ -11,9 +11,9 @@ const resolve = {
 
 const clientConfig = {
   entry,
-  target: "web",
-  devtool: 'nosources-source-map',
-  mode: process.env.NODE_ENV == "production" ? "production" : "development",
+  target: 'web',
+  devtool: process.env.NODE_ENV == 'production' ? 'nosource-source-map' : 'source-map',
+  mode: process.env.NODE_ENV == 'production' ? 'production' : 'development',
   output: {
     path: outputPath,
     chunkFilename: '[name].bundle.js',
@@ -31,14 +31,21 @@ const clientConfig = {
       }
     ]
   },
-  resolve
+  resolve,
+  plugins: [
+    // During the build make literal replacements on client side for 
+    // process.env.API_URL, because there is no process.env
+    new webpack.DefinePlugin({
+      'process.env.API_URL': JSON.stringify(process.env.API_URL || "http://localhost:3000/api") 
+    }),
+  ]
 };
 
 const serverConfig = {
   entry,
   target: 'node',
-  devtool: 'nosources-source-map',
-  mode: process.env.NODE_ENV == "production" ? "production" : "development",
+  devtool: process.env.NODE_ENV == 'production' ? 'nosource-source-map' : 'source-map',
+  mode: process.env.NODE_ENV == 'production' ? 'production' : 'development',
   node: {
     __dirname: false
   },

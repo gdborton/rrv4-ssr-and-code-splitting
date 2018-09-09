@@ -16,7 +16,7 @@ const config = {
   node: {
     __dirname: false
   },
-  devtool: 'nosources-source-map',
+  devtool: serverless.lib.webpack.isLocal ? 'source-map' : 'nosource-source-map',
   externals: [ nodeExternals() ],
   output: {
     libraryTarget: 'commonjs2',
