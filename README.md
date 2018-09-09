@@ -33,13 +33,12 @@ For proper paths, you __MUST__ define custom domain.
 npm run sls:deploy
 ```
 
-## What's async loaded?
+## Isomorphic!
 
-The list of todos that exists between the input bar and the footer of stack of todos. 
-If you open your network tab before navigating between All/Active/Completed, 
-you'll notice requests for `0.index.bundle.js`, `1.index.bundle.js`, and `2.index.bundle.js` respectively.
+Thanks to matchRoutes/renderRoutes from `react-router-config` after HTML is received, route state are restored and 
+all links start to work client side. 
 
-![async-component](./async-highlight.png)
+![todo](./todo.png)
 
 ## Things of note:
 
