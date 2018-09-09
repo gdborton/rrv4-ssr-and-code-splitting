@@ -14,10 +14,24 @@ provider:
   timeout: 6
   # optional, default is true
   versionFunctions: false
+  # Allow access to DynamoDB in role
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - { "Fn::GetAtt": ["TodoDynamoDBTable", "Arn" ] }
+  # Define additional env vars for deployment
   environment:
-    VARNAME: VARVALUE
+    TODO_TABLE: ${self:custom.todoTable}
 
 custom:
+  todoTable: 'todos'
   constants:
     yes: true
     no: false
@@ -51,6 +65,22 @@ functions:
 
 plugins:
   - serverless-webpack
-  - serverless-offline
   - serverless-domain-manager
   - serverless-apigw-binary
+  - serverless-offline
+
+resources:
+  Resources:
+    TodoDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3
+          WriteCapacityUnits: 3
+        TableName: ${self:custom.todoTable}

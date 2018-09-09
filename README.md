@@ -1,4 +1,4 @@
-# Code Splitting + SSR with React Router demo
+# Code Splitting + SSR + Serverless + DynamoDB with React Router demo
 
 Forked from https://github.com/gdborton/rrv4-ssr-and-code-splitting.
 
@@ -7,13 +7,27 @@ with server rendered React components.
 
 After you fetch server rendered HTML routes start fire __locally__.
 
-## Running the demo:
+## Preparing for demo
 
+Before running the demo, you must install a number of components
+
+  * AWS cli &amp; proper credentials
+  * servlerless (`npm install -g serverless`)
+
+Also, either create DynamoDB table manually or execute first time deploy: 
+
+```bash
+npm run sls:deploy
 ```
+
+## Running the demo
+
+```bash
 git clone https://github.com/huksley/todo-react-ssr-serverless
 cd todo-react-ssr-serverless
 npm install
-npm start
+npm run build
+AWS_REGION=eu-west-1 npm start
 open http://localhost:3000
 ```
 
@@ -21,16 +35,27 @@ open http://localhost:3000
 
 Runs `serverless offline` with webpack support.
 
-```
+```bash
 npm run sls
 ```
 
 ## Running in AWS
 
+Creates DynamoDB table, IAM role, deploys Lambda and sets up API Gateway. If custom domain specified, deploys app under this custom domain (first deploy might take some time)
+
+```bash
+npm run sls:deploy
+```
+
 For proper paths, you __MUST__ define custom domain.
 
+  * Create/transfer domain in/to Route53
+  * Verify domain ownership
+  * Create *.domain certificate request in CloudFront Global (N. Virginia)
+  * Wait for it verifaction
+
 ```
-npm run sls:deploy
+CUSTOM_DOMAIN=todo.domain.com CUSTOM_DOMAIN_ENABLED=yes API_URL=https://todo.domain.com/api npm run sls:deploy
 ```
 
 ## Isomorphic!
@@ -48,4 +73,4 @@ all links start to work client side.
    - One for server
    - Another for client
    - Third one (./webpack.serverless.js) for running in serverless
- - The server, starts with some static data, **and is never updated**, you'll lose your changes if you reload the page.
+ - The server starts with empty data. Run `curl -X POST http://localhost:3000/api/init` to load initial data.

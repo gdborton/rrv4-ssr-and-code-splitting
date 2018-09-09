@@ -1,5 +1,5 @@
 import { BrowserRouter, StaticRouter } from 'react-router-dom';
-import { render } from 'react-dom';
+import { hydrate } from 'react-dom';
 import React from 'react';
 import { renderRoutes } from 'react-router-config';
 
@@ -12,7 +12,7 @@ const routeConfig = convertCustomRouteConfig(routes);
 if (typeof window !== 'undefined') {
   ensureReady(routeConfig).then(() => {
     const props = JSON.parse(document.getElementById('props').dataset.props); // eslint-disable-line
-    render(
+    hydrate(
       (
         <BrowserRouter>
           { renderRoutes(routeConfig, props) }

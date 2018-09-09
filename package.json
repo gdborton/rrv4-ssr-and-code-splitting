@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint ./src",
-    "start": "webpack && node ./server.js",
+    "start": "node ./server.js",
     "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1",
     "sls": "webpack && sls offline start",
@@ -32,8 +32,11 @@
   },
   "homepage": "https://github.com/gdborton/rrv4-ssr-and-code-splitting#readme",
   "dependencies": {
+    "aws-sdk": "^2.311.0",
+    "body-parser": "^1.18.3",
     "classnames": "^2.2.5",
     "cors": "^2.8.4",
+    "cross-fetch": "^2.2.2",
     "express": "^4.16.2",
     "mime": "^2.0.3",
     "react": "^16.5.0",
