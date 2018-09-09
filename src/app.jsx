@@ -3,6 +3,7 @@ import { renderRoutes } from 'react-router-config';
 import TodoFooter from './footer';
 import utils from './utils';
 import fetch from 'cross-fetch';
+import swearjar from 'swearjar';
 
 const ENTER_KEY = 13;
 const API_URL = process.env.API_URL || "http://localhost:3000/api";
@@ -98,7 +99,7 @@ class TodoApp extends React.Component {
     if (val) {
       this.addTodo({
         id: utils.uuid(),
-        title: val,
+        title: swearjar.censor(val),
         completed: false
       }).then(() => {
         this.loadTodo().then(() => {
@@ -133,7 +134,7 @@ class TodoApp extends React.Component {
   }
 
   save(todo, text) {
-    this.updateTodo(Object.assign({}, todo, { title: text })).then(() => {
+    this.updateTodo(Object.assign({}, todo, { title: swearjar.censor(text) })).then(() => {
       this.loadTodo().then(() => {
         this.setState({ editing: null })
       })

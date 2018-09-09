@@ -44,7 +44,8 @@
     "react-router": "^4.2.0",
     "react-router-config": "^1.0.0-beta.4",
     "react-router-dom": "^4.2.2",
-    "serverless-http": "^1.6.0"
+    "serverless-http": "^1.6.0",
+    "swearjar": "^0.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
