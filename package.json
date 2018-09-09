@@ -57,6 +57,8 @@
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "eslint-plugin-react": "^7.4.0",
     "serverless": "^1.30.3",
+    "serverless-apigw-binary": "^0.4.4",
+    "serverless-domain-manager": "^2.6.0",
     "serverless-offline": "^3.25.11",
     "serverless-webpack": "^5.2.0",
     "webpack": "^4.17.2",

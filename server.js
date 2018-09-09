@@ -48,5 +48,21 @@ if (process.env.AWS_EXECUTION_ENV !== undefined) {
   console.log("Hello Amazon!");
 }
 
-module.exports.serverless = serverless(app);
+module.exports.serverless = serverless(app, {
+  binary: headers => {
+    const ct = headers['content-type'];
+    if (ct === undefined) {
+      console.log("No content-type header: " + JSON.stringify(headers));
+    }
+    return String(ct).match(/text\/.*/) || ct == "application/json" ? false : true;
+  },
+
+  request: function(request, event, context) {
+    console.log(request);
+  },
+
+  response: function(response, event, context) {
+    console.log(response);
+  }
+});
 

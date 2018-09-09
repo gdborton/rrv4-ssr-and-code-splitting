@@ -18,10 +18,25 @@ provider:
     VARNAME: VARVALUE
 
 custom:
+  constants:
+    yes: true
+    no: false
+  # Make special webpack transpiling for Serverless
   webpack:
     webpackConfig: ./webpack.serverless.js
     includeModules: true
     packager: 'npm'
+  # Create custom domain and serve it using https://$CUSTOM_DOMAIN/* -> <api endpoint>/*
+  customDomain:
+    domainName: ${env:CUSTOM_DOMAIN, 'custom.domain.serverless.com'}
+    createRoute53Record: true
+    enabled: ${self:custom.constants.${env:CUSTOM_DOMAIN_ENABLED, 'no'}}
+  # Add binary images as handled in API gateway
+  apigwBinary:
+    types:
+      - 'image/*'
+      - 'application/font*'
+      - 'application/pdf'
 
 package:
   exclude:
@@ -37,3 +52,5 @@ functions:
 plugins:
   - serverless-webpack
   - serverless-offline
+  - serverless-domain-manager
+  - serverless-apigw-binary
