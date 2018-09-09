@@ -52,7 +52,8 @@ module.exports.serverless = serverless(app, {
   binary: headers => {
     const ct = headers['content-type'];
     if (ct === undefined) {
-      console.log("No content-type header: " + JSON.stringify(headers));
+      console.error("No content-type header: " + JSON.stringify(headers));
+      return false;
     }
     return String(ct).match(/text\/.*/) || ct == "application/json" ? false : true;
   },
