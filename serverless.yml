@@ -1,0 +1,86 @@
+# For full config options, check the docs:
+#    docs.serverless.com
+
+service: todo
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  region: eu-west-1
+  stage: dev
+  # optional, in MB, default is 1024
+  memorySize: 256
+  # optional, in seconds, default is 6
+  timeout: 6
+  # optional, default is true
+  versionFunctions: false
+  # Allow access to DynamoDB in role
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - { "Fn::GetAtt": ["TodoDynamoDBTable", "Arn" ] }
+  # Define additional env vars for deployment
+  environment:
+    TODO_TABLE: ${self:custom.todoTable}
+
+custom:
+  todoTable: 'todos'
+  constants:
+    yes: true
+    no: false
+  # Make special webpack transpiling for Serverless
+  webpack:
+    webpackConfig: ./webpack.serverless.js
+    includeModules: true
+    packager: 'npm'
+  # Create custom domain and serve it using https://$CUSTOM_DOMAIN/* -> <api endpoint>/*
+  customDomain:
+    domainName: ${env:CUSTOM_DOMAIN, 'custom.domain.serverless.com'}
+    createRoute53Record: true
+    enabled: ${self:custom.constants.${env:CUSTOM_DOMAIN_ENABLED, 'no'}}
+  # Add binary images as handled in API gateway
+  apigwBinary:
+    types:
+      - 'image/*'
+      - 'application/font*'
+      - 'application/pdf'
+
+package:
+  exclude:
+    - tmp/**
+
+functions:
+  app:
+    handler: server.serverless
+    events:
+        - http: ANY /
+        - http: 'ANY {proxy+}'
+
+plugins:
+  - serverless-webpack
+  - serverless-domain-manager
+  - serverless-apigw-binary
+  - serverless-offline
+
+resources:
+  Resources:
+    TodoDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3
+          WriteCapacityUnits: 3
+        TableName: ${self:custom.todoTable}

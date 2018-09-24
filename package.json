@@ -5,8 +5,11 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint ./src",
-    "start": "webpack && node ./server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./server.js",
+    "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sls": "webpack && sls offline start",
+    "sls:deploy": "webpack && sls deploy"
   },
   "repository": {
     "type": "git",
@@ -29,29 +32,41 @@
   },
   "homepage": "https://github.com/gdborton/rrv4-ssr-and-code-splitting#readme",
   "dependencies": {
+    "aws-sdk": "^2.311.0",
+    "body-parser": "^1.18.3",
     "classnames": "^2.2.5",
+    "cors": "^2.8.4",
+    "cross-fetch": "^2.2.2",
     "express": "^4.16.2",
     "mime": "^2.0.3",
-    "react": "^15.6.2",
-    "react-dom": "^15.6.2",
+    "react": "^16.5.0",
+    "react-dom": "^16.5.0",
     "react-router": "^4.2.0",
     "react-router-config": "^1.0.0-beta.4",
-    "react-router-dom": "^4.2.2"
+    "react-router-dom": "^4.2.2",
+    "serverless-http": "^1.6.0",
+    "swearjar": "^0.2.0"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^7.2.3",
-    "babel-loader": "^7.1.2",
-    "babel-plugin-dynamic-import-node": "^1.1.0",
-    "babel-plugin-dynamic-import-webpack": "^1.0.1",
-    "babel-plugin-syntax-dynamic-import": "^6.18.0",
-    "babel-preset-airbnb": "^2.4.0",
+    "babel-loader": "^8.0.2",
+    "clean-webpack-plugin": "^0.1.19",
+    "copy-webpack-plugin": "^4.5.2",
     "eslint": "^4.9.0",
-    "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "eslint-plugin-react": "^7.4.0",
-    "react-dom": "^15.6.1",
-    "webpack": "^3.5.5"
+    "serverless": "^1.30.3",
+    "serverless-apigw-binary": "^0.4.4",
+    "serverless-domain-manager": "^2.6.0",
+    "serverless-offline": "^3.25.11",
+    "serverless-webpack": "^5.2.0",
+    "webpack": "^4.17.2",
+    "webpack-cli": "^3.1.0",
+    "webpack-node-externals": "^1.7.2"
   }
 }

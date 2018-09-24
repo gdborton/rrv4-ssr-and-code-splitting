@@ -2,8 +2,11 @@ import React from 'react';
 import { renderRoutes } from 'react-router-config';
 import TodoFooter from './footer';
 import utils from './utils';
+import fetch from 'cross-fetch';
+import swearjar from 'swearjar';
 
 const ENTER_KEY = 13;
+const API_URL = process.env.API_URL || "http://localhost:3000/api";
 
 class TodoApp extends React.Component {
   constructor(props) {
@@ -12,8 +15,72 @@ class TodoApp extends React.Component {
     this.state = {
       editing: null,
       newTodo: '',
-      todos: props.todos,
+      todos: [],
+      loading: 0
     };
+  }
+
+  loading(inc) {
+    this.setState({ loading: this.state.loading + inc })
+  }
+
+  deleteTodo(todo) {
+    console.log("Deleting", todo);
+    this.loading(1)
+    return fetch(API_URL + "/todo/" + todo.id, { method: "DELETE" }).
+      then(res => res.json()).then(response => {
+        console.log("Got delete response: ", response);
+        this.loading(-1)
+      }).catch(err => { this.loading(-1); console.error("Failed deleting todo", err) })
+  }
+
+  addTodo(todo) {
+    if (todo.id === undefined) {
+      todo.id = utils.uuid();
+    }
+    console.log("Adding", todo);
+    this.loading(1)
+    return fetch(API_URL + "/todo", { method: "POST", 
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(todo)
+      }).
+      then(res => res.json()).then(response => {
+        console.log("Got add response: ", response);
+        this.loading(-1)
+      }).catch(err => { this.loading(-1); console.error("Failed adding todo", err) })
+  }
+
+  updateTodo(todo) {
+    console.log("Updating", todo);
+    this.loading(1)
+    return fetch(API_URL + "/todo/" + todo.id, 
+      {
+        method: "POST", 
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(todo) 
+      }).
+      then(res => res.json()).then(response => {
+        console.log("Got update response: ", response);
+        this.loading(-1)
+      }).catch(err => { this.loading(-1); console.error("Failed updating todo", err) })
+  }
+
+  loadTodo() {
+    console.log("Fetching all todos");
+    this.loading(1)
+    return fetch(API_URL + "/todo").then(res => res.json()).then(todos => {
+      console.log("Got all todos", todos);
+      this.setState({ todos });
+      this.loading(-1)
+    }).catch(err => { this.loading(-1); console.error("Failed fetching todos", err) })
+  }
+
+  componentDidMount() {
+    this.loadTodo()
   }
 
   handleChange(event) {
@@ -30,59 +97,48 @@ class TodoApp extends React.Component {
     const val = this.state.newTodo.trim();
 
     if (val) {
-      this.setState({
-        todos: this.state.todos.concat({
-          id: utils.uuid(),
-          title: val,
-          completed: false,
-        }),
-        newTodo: '',
+      this.addTodo({
+        id: utils.uuid(),
+        title: swearjar.censor(val),
+        completed: false
+      }).then(() => {
+        this.loadTodo().then(() => {
+          this.setState({ newTodo: '' })
+        })
       });
     }
   }
 
   toggleAll(event) {
     const { checked } = event.target;
-    this.setState({
-      todos: this.state.todos.map(todo => Object.assign({}, todo, { completed: checked })),
-    });
+    Promise.all(this.state.todos.map(todo => 
+      this.updateTodo(Object.assign({}, todo, { completed: checked })))).then(() => {
+      this.loadTodo();
+    })
   }
 
-  toggle(todoToToggle) {
-    this.setState({
-      todos: this.state.todos.map((todo) => {
-        if (todo === todoToToggle) {
-          return Object.assign({}, todo, {
-            completed: !todo.completed,
-          });
-        }
-        return todo;
-      }),
-    });
+  toggle(todo) {
+    this.updateTodo(Object.assign({}, todo, { completed: !todo.completed })).then(() => {
+      this.loadTodo();
+    })
   }
 
-  destroy(passedTodo) {
-    this.setState({
-      todos: this.state.todos.filter(todo => todo !== passedTodo),
-    });
+  destroy(todo) {
+    this.deleteTodo(todo).then(() => {
+      this.loadTodo();
+    })
   }
 
   edit(todo) {
     this.setState({ editing: todo.id });
   }
 
-  save(todoToSave, text) {
-    this.setState({
-      todos: this.state.todos.map((todo) => {
-        if (todo === todoToSave) {
-          return Object.assign({}, todo, {
-            title: text,
-          });
-        }
-        return todo;
-      }),
-      editing: null,
-    });
+  save(todo, text) {
+    this.updateTodo(Object.assign({}, todo, { title: swearjar.censor(text) })).then(() => {
+      this.loadTodo().then(() => {
+        this.setState({ editing: null })
+      })
+    })
   }
 
   cancel() {
@@ -90,9 +146,11 @@ class TodoApp extends React.Component {
   }
 
   clearCompleted() {
-    this.setState({
-      todos: this.state.todos.filter(todo => !todo.completed),
-    });
+    const todel = this.state.todos.filter(todo => todo.completed);
+    const del = todel.map(todo => this.deleteTodo(todo))
+    Promise.all(del).then(() => {
+      this.loadTodo();
+    })
   }
 
   render() {
@@ -143,7 +201,10 @@ class TodoApp extends React.Component {
     return (
       <div>
         <header className="header">
-          <h1>todos</h1>
+          <h1>
+            todos
+            { this.state.loading > 0 ? <div className="spinner"></div> : <span/> }
+          </h1>
           <input
             className="new-todo"
             placeholder="What needs to be done?"

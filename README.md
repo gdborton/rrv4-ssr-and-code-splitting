@@ -1,30 +1,76 @@
-# Code Splitting + SSR with RRv4 demo
+# Code Splitting + SSR + Serverless + DynamoDB with React Router demo
 
-This is a demo repository set up to demo code splitting by route on React Router v4 with server rendered React components.
+Forked from https://github.com/gdborton/rrv4-ssr-and-code-splitting.
 
-Running the demo:
+This is a demo repository set up to demo code splitting by route on React Router 
+with server rendered React components.
 
+After you fetch server rendered HTML routes start fire __locally__.
+
+## Preparing for demo
+
+Before running the demo, you must install a number of components
+
+  * AWS cli &amp; proper credentials
+  * servlerless (`npm install -g serverless`)
+
+Also, either create DynamoDB table manually or execute first time deploy: 
+
+```bash
+npm run sls:deploy
 ```
-git clone git@github.com:gdborton/rrv4-ssr-and-code-splitting.git
-cd rrv4-ssr-and-code-splitting/
+
+## Running the demo
+
+```bash
+git clone https://github.com/huksley/todo-react-ssr-serverless
+cd todo-react-ssr-serverless
 npm install
-npm start
+npm run build
+AWS_REGION=eu-west-1 npm start
 open http://localhost:3000
 ```
 
-## What's async loaded?
+## Running in serverless local
 
-The list of todos that exists between the input bar and the footer of stack of todos. If you open your network tab before navigating between All/Active/Completed, you'll notice requests for `0.index.bundle.js`, `1.index.bundle.js`, and `2.index.bundle.js` respectively.
+Runs `serverless offline` with webpack support.
 
-![async-component](./async-highlight.png)
+```bash
+npm run sls
+```
+
+## Running in AWS
+
+Creates DynamoDB table, IAM role, deploys Lambda and sets up API Gateway. If custom domain specified, deploys app under this custom domain (first deploy might take some time)
+
+```bash
+npm run sls:deploy
+```
+
+For proper paths, you __MUST__ define custom domain.
+
+  * Create/transfer domain in/to Route53
+  * Verify domain ownership
+  * Create *.domain certificate request in CloudFront Global (N. Virginia)
+  * Wait for it verifaction
+
+```
+CUSTOM_DOMAIN=todo.domain.com CUSTOM_DOMAIN_ENABLED=yes API_URL=https://todo.domain.com/api npm run sls:deploy
+```
+
+## Isomorphic!
+
+Thanks to matchRoutes/renderRoutes from `react-router-config` after HTML is received, route state are restored and 
+all links start to work client side. 
+
+![todo](./todo.png)
 
 ## Things of note:
+
  - The contents of this repo were based on the [TodoMVC code](https://github.com/tastejs/todomvc/tree/master/examples/react) originally written by [Pete Hunt](https://github.com/petehunt).
- - We're using babel-eslint to enable `import()`.
- - We're using the Airbnb dynamic import plugins, webpack's `import()` creates references to `window` that don't work in node:
-   - [babel-plugin-dynamic-import-webpack](https://github.com/airbnb/babel-plugin-dynamic-import-webpack) for client side code.
-   - [babel-plugin-dynamic-import-node](https://github.com/airbnb/babel-plugin-dynamic-import-node) for server side code.
- - We have two webpack configs:
-   - One for server (`libraryTarget = commonjs2` and `babel-plugin-dynamic-import-node`).
-   - Another for client (`babel-plugin-dynamic-import-webpack`).
- - The server, starts with some static data, **and is never updated**, you'll lose your changes if you reload the page.
+ - Upgraded to webpack v4 comparing to upstream repo
+ - We have 3 webpack configs:
+   - One for server
+   - Another for client
+   - Third one (./webpack.serverless.js) for running in serverless
+ - The server starts with empty data. Run `curl -X POST http://localhost:3000/api/init` to load initial data.
